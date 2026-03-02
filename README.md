@@ -12,7 +12,8 @@
 
 # From GitHub
 install.packages("devtools")
-devtools::install_github("MarcoVidalCordasco/brGDGT-NPP/brGDGT-NPP")
+
+devtools::install_github("MarcoVidalCordasco/brGDGT-NPP")
 
 # Load the package
 library(brGDGTNPP)
