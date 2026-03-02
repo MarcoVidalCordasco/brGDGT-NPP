@@ -1,1 +1,204 @@
+---
+title: "brGDGTNPP: Complete Workflow Tutorial"
+author: "Vidal-Cordasco, M. and Manica, A."
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{brGDGTNPP: Complete Workflow Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+# Setup
+
+```{r, eval = FALSE}
+# Clear environment
+rm(list = ls())
+
+# Set working directory to where the script and package file are located
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+getwd()
+
+# Load devtools for package development
+library(devtools)
+document("R_package")
+build("R_package")
+
+# Install and load the package
+install.packages("brGDGTNPP_0.1.0.tar.gz", 
+                 repos = NULL, 
+                 type = "source")
+library(brGDGTNPP)
+```
+
+# Load example data
+
+```{r}
+library(brGDGTNPP)
+data(example_data)
+head(example_data)
+```
+
+# Reliability/Applicability assessment
+
+Check if new brGDGT data falls within the training data space.
+
+```{r, warning = FALSE}
+check_data <- diagnose_applicability(
+  brgdt_data = example_data,
+  plot = TRUE,
+  threshold = 0.95,
+  map = TRUE,
+  n_neighbors = 5
+)
+
+# Results
+print(check_data)
+```
+
+## Diagnostic plots
+
+### PCA plot
+
+```{r, fig.cap = "PCA of samples vs training data"}
+check_data$plots$pca
+```
+
+### Mahalanobis distance plot
+
+```{r, fig.cap = "Mahalanobis distances (statistical rarity)"}
+check_data$plots$mahalanobis
+```
+
+### Geographic similarity map
+
+```{r, fig.cap = "Training sites with most similar brGDGT composition"}
+check_data$plots$similarity_map
+```
+
+### Ternary plot
+
+```{r, fig.cap = "Methylation groups (training data sized by NPP)"}
+check_data$plots$ternary
+```
+
+# Compute NPP
+
+```{r}
+results <- predict_npp(example_data, sample_type = "Lacustrine Sediment")
+head(results)
+
+# Save outputs
+write.csv(results, "results.csv")
+```
+
+## Plot NPP with chronology
+
+```{r, fig.cap = "NPP through time"}
+# If your data include chronologies
+results$Age <- example_data$Age
+
+with(results, plot(x = Age, y = NPP_pred_mean, 
+                   xlab = "Age BP", 
+                   ylab = "Net Primary Productivity",
+                   main = "Net Primary Productivity",
+                   pch = 20,        
+                   col = "black"))
+```
+
+# Potential NPP (Miami model)
+
+Create climate data and compute potential NPP using the Miami model.
+
+```{r}
+# Create climate data with 50 samples
+set.seed(123)
+
+climate_data <- data.frame(
+  ID = 1:50,
+  MAT = seq(10, 15, length.out = 50) + rnorm(50, 0, 1),
+  MAP = seq(400, 700, length.out = 50) + rnorm(50, 0, 100)
+)
+
+potential_npp <- miami_model(climate_data)
+head(potential_npp)
+
+# Plot results
+with(potential_npp, plot(x = ID, y = NPP_pred_mean, 
+                   xlab = "ID", 
+                   ylab = "Net Primary Productivity",
+                   main = "Potential NPP (Miami model)",
+                   pch = 20,        
+                   col = "blue"))
+```
+
+# Compute Human Appropriation of NPP (HANPP)
+
+```{r}
+hanpp <- miami_model(climate_data,
+                    npp_observed = results$NPP_pred_mean[1:50],
+                    hanpp = TRUE)
+
+with(hanpp, plot(x = ID, y = HANPP, 
+                         xlab = "ID", 
+                         ylab = "HANPP",
+                         main = "Human Appropriation of NPP",
+                         pch = 20,        
+                         col = "black"))
+```
+
+## Combined plot
+
+```{r, fig.cap = "Comparison of NPP estimates"}
+# Order ID values
+hanpp_sorted <- hanpp[order(hanpp$ID), ]
+potential_sorted <- potential_npp[order(potential_npp$ID), ]
+results_sorted <- results[order(results$ID), ]
+
+# Set y limits
+y_limits <- range(c(hanpp_sorted$HANPP, 
+                    potential_sorted$NPP_pred_mean, 
+                    results_sorted$NPP_pred_mean), na.rm = TRUE)
+
+# Create plot
+plot(x = hanpp_sorted$ID, y = hanpp_sorted$HANPP,
+     xlab = "ID", 
+     ylab = "NPP (g/m²/yr)",
+     main = "Net Primary Productivity",
+     pch = 20,        
+     col = "black",
+     ylim = y_limits,
+     type = "b")  
+
+# Climate-derived NPP
+lines(x = potential_sorted$ID, y = potential_sorted$NPP_pred_mean, 
+      col = "blue", type = "b", pch = 20)
+
+# brGDGT-derived NPP
+lines(x = results_sorted$ID, y = results_sorted$NPP_pred_mean, 
+      col = "red", type = "b", pch = 20)
+
+# Legend
+legend("topleft",
+       legend = c("Climate-derived NPP", "brGDGT-derived NPP", "Difference (HANPP)"),
+       col = c("blue", "red", "black"),
+       pch = 20,
+       lty = 1)
+```
+
+# Session information
+
+```{r}
+sessionInfo()
+```
