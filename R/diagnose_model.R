@@ -458,7 +458,7 @@ generate_diagnostic_plots_pca <- function(diagnostic_results, pca_ref, pca_new,
       plots$ternary <- plotly::plot_ly(
         type = 'scatterternary',
         mode = 'markers'
-      ) %>%
+      ) |>
         # Training data
         plotly::add_trace(
           a = tern_train$Tetra,
@@ -473,7 +473,7 @@ generate_diagnostic_plots_pca <- function(diagnostic_results, pca_ref, pca_new,
           name = "Training data",
           text = ~paste('NPP:', round(tern_train$NPP)),
           hoverinfo = 'text'
-        ) %>%
+        ) |>
         # Testing data - within domain
         plotly::add_trace(
           a = tern_test$Tetra[tern_test$Within_Domain],
@@ -485,7 +485,7 @@ generate_diagnostic_plots_pca <- function(diagnostic_results, pca_ref, pca_new,
             line = list(color = '#90EE90', width = 2)
           ),
           name = "Testing (within domain)"
-        ) %>%
+        ) |>
         # Testing data - outside domain
         plotly::add_trace(
           a = tern_test$Tetra[!tern_test$Within_Domain],
@@ -497,7 +497,7 @@ generate_diagnostic_plots_pca <- function(diagnostic_results, pca_ref, pca_new,
             line = list(color = '#FF6B6B', width = 2)
           ),
           name = "Testing (outside domain)"
-        ) %>%
+        ) |>
         plotly::layout(
           title = "brGDGT Methylation Groups",
           ternary = list(
@@ -610,4 +610,5 @@ print.brGDGT_diagnostic <- function(x, ...) {
     )
     print(df_summary)
   }
+
 }
