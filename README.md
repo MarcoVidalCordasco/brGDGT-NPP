@@ -19,6 +19,7 @@ devtools::install_github("MarcoVidalCordasco/brGDGT-NPP",
 
 # Load the package and check demo
 head(example_data)
+
 vignette("brGDGTNPP-demo")
 
 
