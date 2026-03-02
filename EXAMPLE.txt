@@ -1,0 +1,96 @@
+# Install the package
+# install.packages("brGDGTNPP", repos = NULL, type = "source")
+
+# Load the package
+library(brGDGTNPP)
+
+# Load your brGDGT data
+my_data <- read.csv("my_brgdt_samples.csv")
+# First column: SampleID
+# Columns 2-16: brGDGT compounds (as percentages)
+# Example data available in data(example_data), the following code uses this data
+my_data <-data(example_data)
+
+# Assess reliability of model predictions
+check_data <- diagnose_applicability(
+  brgdt_data = my_data,
+  plot = TRUE,
+  threshold = 0.95,
+  map = TRUE,
+  n_neighbors = 15
+)
+
+# Results
+print(check_data)
+# Plot 1: PCA
+check_data$plots$pca
+# Plot 2: Mahalanobis distance
+check_data$plots$mahalanobis
+# Plot 3: Present-day locations with most similar brGDGTs
+check_data$plots$similarity_map
+#Plot 4: Ternary plot
+check_data$plots$ternary
+
+
+# Predict NPP
+results <- predict_npp(my_data, sample_type = "Soil")
+# View results
+print(results)
+#Save outputs
+write.csv(results, "results.csv")
+
+# Potential (climate-derived) NPP
+# Create climate data with 50 samples
+set.seed(123)
+climate_data <- data.frame(
+  ID = 1:50,
+  MAT = seq(10, 15, length.out = 50) + rnorm(50, 0, 1),
+  MAP = seq(400, 700, length.out = 50) + rnorm(50, 0, 100)
+)
+
+# NPP derived from the Miami model
+potential_npp <- miami_model(climate_data)
+# View results
+print(potential_npp)
+
+# Difference between climate and brGDGT- derived NPP (HANPP)
+
+hanpp<- miami_model(climate_data,
+                    npp_observed = results$NPP_pred_mean,
+                    hanpp=TRUE)
+# View results
+print(hanpp)
+
+# Order ID values
+hanpp_sorted <- hanpp[order(hanpp$ID), ]
+potential_sorted <- potential_npp[order(potential_npp$ID), ]
+results_sorted <- results[order(results$ID), ]
+
+# plot
+y_limits <- range(c(hanpp_sorted$HANPP, 
+                    potential_sorted$NPP_pred_mean, 
+                    results_sorted$NPP_pred_mean), na.rm = TRUE)
+
+plot(x = hanpp_sorted$ID, y = hanpp_sorted$HANPP,
+     xlab = "ID", 
+     ylab = "NPP (g/m²/yr)",
+     main = "Net Primary Productivity",
+     pch = 20,        
+     col = "black",
+     ylim = y_limits,
+     type = "b")  
+
+# Climate-derived NPP
+lines(x = potential_sorted$ID, y = potential_sorted$NPP_pred_mean, 
+      col = "blue", type = "b", pch = 20)
+
+# brGDGT-derived NPP
+lines(x = results_sorted$ID, y = results_sorted$NPP_pred_mean, 
+      col = "red", type = "b", pch = 20)
+
+# Legend
+legend("topleft",
+       legend = c( "Climate-derived NPP", "brGDGT-derived NPP","Difference (HANPP)"),
+       col = c( "blue", "red", "black"),
+       pch = 20,
+       lty = 1)
