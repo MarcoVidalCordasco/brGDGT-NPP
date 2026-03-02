@@ -13,9 +13,12 @@
 # From GitHub
 install.packages("devtools")
 
-devtools::install_github("MarcoVidalCordasco/brGDGT-NPP")
+devtools::install_github("MarcoVidalCordasco/brGDGT-NPP", 
+                         build_vignettes = TRUE, 
+                         dependencies = TRUE)
 
-# Load the package
+# Load the package and check demo
 head(example_data)
+vignette("brGDGTNPP-demo")
 
 
