@@ -18,6 +18,8 @@ devtools::install_github("MarcoVidalCordasco/brGDGT-NPP",
                          dependencies = TRUE)
 
 # Load the package and check demo
+library(brGDGT-NPP)
+
 head(example_data)
 
 vignette("brGDGTNPP-demo")
