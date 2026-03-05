@@ -24,14 +24,11 @@ Imports: compositions, randomForest, stats, utils, ggplot2, gridExtra,
         reshape2, ranger, caret, readxl, plotly, geosphere, grDevices
 Suggests: knitr, rmarkdown, ggtern
 VignetteBuilder: knitr
-License: MIT + file LICENSE
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
 NeedsCompilation: no
 Packaged: 2026-03-02 20:32:09 UTC; vidalma
-Author: Marco A. Vidal-Cordasco [aut, cre],
-  Andrea Manica [aut]
-Maintainer: Marco A. Vidal-Cordasco <mav54@cam.ac.uk>
 
 
