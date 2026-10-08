@@ -7,27 +7,33 @@ export(miami_model)
 export(predict_npp)
 importFrom(compositions,clr)
 importFrom(geosphere,distHaversine)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,coord_fixed)
-importFrom(ggplot2,element_text)
-importFrom(ggplot2,geom_hline)
-importFrom(ggplot2,geom_point)
-importFrom(ggplot2,geom_polygon)
-importFrom(ggplot2,geom_text)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,labs)
-importFrom(ggplot2,scale_color_manual)
-importFrom(ggplot2,scale_fill_manual)
-importFrom(ggplot2,scale_size_continuous)
-importFrom(ggplot2,theme_minimal)
+importFrom(ggplot2,
+  aes,
+  coord_fixed,
+  element_text,
+  geom_hline,
+  geom_point,
+  geom_polygon,
+  geom_text,
+  ggplot,
+  labs,
+  scale_color_manual,
+  scale_fill_manual,
+  scale_size_continuous,
+  theme_minimal
+)
 importFrom(grDevices,rgb)
-importFrom(plotly,add_trace)
-importFrom(plotly,layout)
-importFrom(plotly,plot_ly)
+importFrom(plotly,
+  add_trace,
+  layout,
+  plot_ly
+)
 importFrom(randomForest,randomForest)
 importFrom(readxl,read_excel)
-importFrom(stats,cor)
-importFrom(stats,mahalanobis)
-importFrom(stats,pchisq)
-importFrom(stats,qchisq)
-importFrom(stats,quantile)
+importFrom(stats,
+  cor,
+  mahalanobis,
+  pchisq,
+  qchisq,
+  quantile
+)

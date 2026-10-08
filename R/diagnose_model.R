@@ -1,25 +1,29 @@
 #' Diagnose if new brGDGT data falls within the training data space
 #'
-#' @description
-#' Checks whether new brGDGT samples fall within the brGDGT composition space
-#' of the training data used to build the prediction model. This helps identify
-#' samples that might yield unreliable predictions. If geographic coordinates
-#' are provided, it also shows the spatial distribution of similar samples.
+#' @description Checks whether new brGDGT samples fall within the brGDGT
+#' composition space of the training data used to build the prediction model.
+#' This helps identify samples that might yield unreliable predictions. If
+#' geographic coordinates are provided, it also shows the spatial distribution
+#' of similar samples.
 #'
 #' @param brgdt_data A data frame containing brGDGT measurements. Must include:
 #'   * First column: Sample ID or identifier
 #'   * Columns with brGDGT compounds: fIa, fIb, fIc, fIIa, fIIa_, fIIb, fIIb_,
-#'     fIIc, fIIc_, fIIIa, fIIIa_, fIIIb, fIIIb_, fIIIc, fIIIc_
+#'   fIIc, fIIc_, fIIIa, fIIIa_, fIIIb, fIIIb_, fIIIc, fIIIc_
 #'   * Optional: Latitude and Longitude columns for geographic mapping
 #' @param reference_data Optional reference data. If NULL, loads from package
 #' @param plot Logical; if TRUE, generates diagnostic plots (default = TRUE)
-#' @param threshold Numeric; Mahalanobis distance threshold quantile (default = 0.95)
-#' @param use_pca Logical; if TRUE, uses PCA to avoid singular matrix (default = TRUE)
-#' @param map Logical; if TRUE, generates geographic map (requires Latitude/Longitude)
-#' @param n_neighbors Integer; number of nearest neighbors to identify (default = 5)
+#' @param threshold Numeric; Mahalanobis distance threshold quantile (default =
+#'   0.95)
+#' @param use_pca Logical; if TRUE, uses PCA to avoid singular matrix (default =
+#'   TRUE)
+#' @param map Logical; if TRUE, generates geographic map (requires
+#'   Latitude/Longitude)
+#' @param n_neighbors Integer; number of nearest neighbors to identify (default
+#'   = 5)
 #'
-#' @return A list with diagnostic results:
-#'   \item{within_domain}{Logical vector indicating if each sample is within domain}
+#' @return A list with diagnostic results: \item{within_domain}{Logical vector
+#'   indicating if each sample is within domain}
 #'   \item{mahalanobis_dist}{Mahalanobis distances to training data}
 #'   \item{p_values}{P-values for each sample}
 #'   \item{nearest_neighbor_dist}{Distance to nearest training sample}
@@ -29,7 +33,8 @@
 #'
 #' @importFrom compositions clr
 #' @importFrom ggplot2 ggplot aes geom_point geom_hline labs theme_minimal
-#' @importFrom ggplot2 scale_color_manual scale_fill_manual scale_size_continuous
+#' @importFrom ggplot2 scale_color_manual scale_fill_manual
+#'   scale_size_continuous
 #' @importFrom ggplot2 geom_polygon geom_text coord_fixed element_text
 #' @importFrom stats mahalanobis qchisq pchisq quantile cor
 #' @importFrom grDevices rgb
@@ -42,13 +47,13 @@
 #' \dontrun{
 #' # Load your brGDGT data
 #' my_data <- read.csv("my_brgdt_data.csv")
-#' 
+#'
 #' # Check if data falls within model domain
 #' diagnostics <- diagnose_applicability(my_data)
-#' 
+#'
 #' # View which samples are safe to predict
 #' print(diagnostics$within_domain)
-#' 
+#'
 #' # Generate diagnostic plots with map (if coordinates available)
 #' diagnostics <- diagnose_applicability(my_data, plot = TRUE, map = TRUE)
 #' }

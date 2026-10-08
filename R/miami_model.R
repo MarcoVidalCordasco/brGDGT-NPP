@@ -1,26 +1,29 @@
-#' Predict NPP from mean annual temperature and precipitation with Miami model (Lieth, 1975)
+#' Predict NPP from mean annual temperature and precipitation with Miami model
+#' (Lieth, 1975)
 #'
-#' @description
-#' Predicts potential Net Primary Productivity (NPP) from temperature and precipitation data using
-#' the Miami model (Lieth, H. Modeling the Primary Productivity of the World. 237–263 (1975) 
+#' @description Predicts potential Net Primary Productivity (NPP) from
+#' temperature and precipitation data using the Miami model (Lieth, H. Modeling
+#' the Primary Productivity of the World. 237–263 (1975)
 #' doi:10.1007/978-3-642-80913-2_12.
 #'
-#' @param climate_data A data frame containing temperatures and precipitations. Must include:
+#' @param climate_data A data frame containing temperatures and precipitations.
+#'   Must include:
 #'   \itemize{
-#'     \item First column: Sample ID or identifier (e.g., sample depth, archaeological level)
+#'     \item First column: Sample ID or identifier (e.g., sample depth, 
+#'           archaeological level)
 #'     \item Columns 2-3: mean annual temperature (MAT) in °C
 #'           and mean annual precipitation (MAP) in mm
 #'   }
-#' @param npp_observed Optional numeric vector or data frame with observed/predicted NPP values 
-#'   from brGDGTs. Required if hanpp = TRUE.
-#' @param hanpp Logical; if TRUE, returns Human Appropriation of NPP (HANPP), computed
-#'   as the difference between climate-derived NPP (Miami model) and brGDGT-derived NPP.
-#'   Default is FALSE.
+#' @param npp_observed Optional numeric vector or data frame with
+#'   observed/predicted NPP values from brGDGTs. Required if hanpp = TRUE.
+#' @param hanpp Logical; if TRUE, returns Human Appropriation of NPP (HANPP),
+#'   computed as the difference between climate-derived NPP (Miami model) and
+#'   brGDGT-derived NPP. Default is FALSE.
 #'
-#' @return A data frame with columns:
-#'   \item{ID}{Sample identifier}
-#'   \item{NPP_pred_mean}{Predicted potential NPP value from Miami model (g/m²/yr)}
-#'   \item{HANPP}{Human Appropriation of NPP (g/m²/yr) - only if hanpp = TRUE}
+#' @return A data frame with columns: \item{ID}{Sample identifier}
+#'   \item{NPP_pred_mean}{Predicted potential NPP value from Miami model
+#'   (g/m²/yr)} \item{HANPP}{Human Appropriation of NPP (g/m²/yr) - only if
+#'   hanpp = TRUE}
 #'
 #' @export
 #'
@@ -32,21 +35,20 @@
 #'   MAT = c(10, 15, 20, 25, 30),
 #'   MAP = c(500, 1000, 1500, 2000, 2500)
 #' )
-#' 
+#'
 #' # Predict potential NPP with Miami model
 #' results <- miami_model(climate_data)
 #' head(results)
-#' 
+#'
 #' # Example with brGDGT-derived NPP to calculate HANPP
 #' brgdt_npp <- c(550, 680, 720, 750, 780)  # example values
-#' results_hanpp <- miami_model(climate_data, 
-#'                               npp_observed = brgdt_npp, 
+#' results_hanpp <- miami_model(climate_data,
+#'                               npp_observed = brgdt_npp,
 #'                               hanpp = TRUE)
 #' head(results_hanpp)
 #' }
 #'
-#' @seealso
-#' \code{\link{predict_npp}} for computing brGDGT-derived NPP
+#' @seealso \code{\link{predict_npp}} for computing brGDGT-derived NPP
 
 miami_model <- function(climate_data, npp_observed = NULL, hanpp = FALSE) {
   
